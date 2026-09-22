@@ -1,0 +1,49 @@
+# Cybersecurity Report — 2026-07-06
+
+## Week in Security
+This week’s tagged Reader pool was current enough to produce a report, but only because the freshest material sat in `later`; the combined `feed` plus `later` pool is otherwise stale and heavily weighted toward 2023-2025 content, which is a tagging and collection hygiene problem rather than a real picture of the week. Within the fresh set, the dominant themes were infostealer operations, messaging-account phishing tied to Russian actors, and a steady expansion of agent and browser attack surfaces around AI tooling. Identity and cloud security coverage also tilted toward control-plane hardening, with Microsoft pushing tighter partner governance, stronger PIM workflows, and more contextual cloud-risk reduction. The selected set did not surface meaningful fresh EU or Sweden regulatory coverage, so this run should be read as strong on threat activity and weaker on compliance developments.
+
+## Notable Incidents & Breaches
+PamStealer showed that macOS infostealers are becoming quieter and more operationally mature. Jamf’s analysis, covered by Ars Technica, described a two-stage malware chain using AppleScript, JXA, and a Rust payload that validates stolen passwords locally through macOS PAM before exfiltration. The impact is credential theft with reduced defender visibility, especially because the malware minimizes obvious child-process activity. The lesson is that macOS defenders need behavior-based detection around Script Editor abuse, local password-prompt abuse, and unexpected Full Disk Access requests rather than relying on older commodity-macOS-malware patterns.
+
+US authorities also escalated response to a long-running campaign against Signal and WhatsApp accounts tied to Russian groups UNC5792 and UNC4221. The campaign used fake support messages and backup-key theft to compromise thousands of accounts belonging to officials, journalists, and other high-value targets. The operational impact is direct exposure of current chats and, when backup keys are surrendered, older conversation history. The lesson is basic but still decisive: high-risk users need tighter anti-phishing discipline around device-linking flows, backup recovery keys, and urgent “security update” prompts inside messaging platforms.
+
+Operation Endgame’s June action against StealC, Amadey, and related infrastructure was one of the more meaningful disruption moves in the set. Europol and partners said the operation hit hundreds of servers and domains, recovered millions of stolen credentials, and targeted tooling that feeds ransomware and fraud pipelines. The impact is short-term disruption of credential theft and malware delivery at scale, but not elimination of the market. The lesson is that takedowns help, yet defenders still need to assume stolen credentials from unmanaged devices will continue feeding enterprise intrusions.
+
+## Threat Actor Activity
+Russian-linked phishing against secure messaging remained one of the clearest state-backed trends in the selected material. The tradecraft was not a platform crypto break; it was account takeover through social engineering, device-linking abuse, and backup-key theft. That matters because it reinforces a familiar pattern: mature actors still prefer reliable human-layer compromise over technically riskier exploit chains when targeting diplomatic and journalistic communications.
+
+Cybercrime activity centered on the StealC and Amadey ecosystem. Microsoft’s technical write-up shows how infostealers and loaders now function as commodity services, with operators renting builders, delivery infrastructure, and post-compromise tooling. The threat to enterprises is indirect but material: an employee’s unmanaged device can yield cookies, session tokens, or VPN credentials that later enable valid-account access into corporate systems.
+
+AI-focused abuse also kept broadening. Microsoft and third-party reporting pointed to malicious browser extensions using AI branding for search interception, MCP tool-poisoning risk in agent workflows, and prompt-injection-driven abuse against local agents and AI browsers. The common pattern is trust-boundary abuse: attackers do not need to break the model if they can poison the tool metadata, browser extension, or content pipeline the model trusts.
+
+## Cloud & Identity Security
+Identity hardening was a stronger theme than fresh breach reporting in the cloud stack. Microsoft’s partner-ecosystem guidance centered on CSP vetting, mandatory tenant security baselines, least-privilege delegated administration through GDAP, and rapid revocation of downstream customer access when risk is detected. For defenders, this is a reminder that third-party admin relationships remain one of the highest-consequence trust boundaries in Microsoft-heavy environments.
+
+Privileged access governance also moved forward with custom extensions for Microsoft Entra PIM role activation. The practical significance is not the feature announcement itself but the control model: role activation can now be conditioned on external business logic such as ticket validity, HR status, or compliance checks. That is a useful zero-trust direction because it shifts privileged access closer to contextual authorization rather than static approval flows.
+
+On the cloud side, Microsoft’s CNAPP and broader June security updates emphasized exploitability-based prioritization, multicloud visibility, database threat protection on AWS RDS, and a unified identity risk score. The signal for defenders is that posture management is continuing to merge with runtime, identity, and SOC workflows; the operational question is no longer whether a finding exists, but whether the combination of identity, exposure, and workload context makes it reachable.
+
+Agent security also crossed from theory into endpoint controls. Microsoft outlined runtime protection for local AI agents and specific detections for MCP tool poisoning and prompt-injection-driven tool misuse. That is relevant to both cloud and identity security because agent permissions, tool allowlists, and non-human identities are becoming a practical governance problem, not just an architecture discussion.
+
+## Recommended Actions
+1. Re-run phishing-resistant controls for high-risk users on Signal, WhatsApp, and similar platforms, with explicit guidance on device-linking prompts, backup keys, and fake support workflows.
+2. Hunt for infostealer follow-on risk, not just malware execution. Prioritize session revocation, password resets, and token hygiene for users accessing corporate resources from unmanaged or weakly managed devices.
+3. Tighten third-party admin trust boundaries in Microsoft environments by reviewing GDAP relationships, partner privileges, break-glass paths, and tenant-level monitoring for delegated access abuse.
+4. Treat AI agents, MCP servers, and browser-based AI tooling as production attack surface. Enforce allowlists, inspect tool metadata changes, require human approval for high-impact agent actions, and block untrusted AI-themed browser extensions.
+5. Shift cloud remediation toward exploitability and attack-path reduction. Focus on exposed data stores, excessive identity permissions, and misconfigurations that combine into reachable attack paths across multicloud environments.
+6. Fix the Readwise collection itself: refresh tags and sources for NIS2, DORA, GDPR, IMY, and Swedish cyber developments so future weekly reports are not forced to rely almost entirely on `later` for current material.
+
+## Sources
+- Newly discovered PamStealer isn’t your typical macOS malware — https://arstechnica.com/security/2026/07/new-pamstealer-macos-malware-uses-clever-tradecraft-to-remain-stealthy/
+- US offers $10 million for info on group behind Signal and WhatsApp hacking spree — https://arstechnica.com/information-technology/2026/06/us-offers-10-million-for-info-on-group-behind-signal-and-whatsapp-hacking-spree/
+- One-two punch delivered in global operation disrupts cybercrime "assembly line" — https://arstechnica.com/security/2026/06/one-two-punch-delivered-in-global-operation-disrupts-cybercrime-assembly-line/
+- StealC and Amadey: Breaking down infostealers and the cybercrime services that deliver them — https://www.microsoft.com/en-us/security/blog/2026/06/24/stealc-and-amadey-breaking-down-infostealers-and-the-cybercrime-services-that-deliver-them/
+- Chromium extension uses AI‑related branding to redirect browser search — https://www.microsoft.com/en-us/security/blog/2026/06/29/chromium-extension-uses-airelated-branding-redirect-browser-search/
+- New attack provides one more reason why AI browsers are a bad idea — https://arstechnica.com/security/2026/06/ai-browsers-can-be-lulled-into-a-dream-world-where-guardrails-no-longer-apply/
+- Securing AI agents: When AI tools move from reading to acting — https://www.microsoft.com/en-us/security/blog/2026/06/30/securing-ai-agents-ai-tools-move-from-reading-acting/
+- Improving security posture across the Microsoft partner ecosystem — https://www.microsoft.com/en-us/security/blog/2026/07/02/improving-security-posture-across-the-microsoft-partner-ecosystem/
+- CNAPP evolution: How Microsoft aligns with leading cloud risk management platforms — https://www.microsoft.com/en-us/security/blog/2026/06/24/cnapp-evolution-how-microsoft-aligns-with-leading-cloud-risk-management-platforms/
+- What’s new in Microsoft Security: June 2026 — https://www.microsoft.com/en-us/security/blog/2026/06/30/whats-new-in-microsoft-security-june-2026/
+- What’s new in Microsoft Sentinel: June 2026 — https://techcommunity.microsoft.com/t5/microsoft-sentinel-blog/what-s-new-in-microsoft-sentinel-june-2026/ba-p/4531902
+- Configure AI agent runtime protection (preview) with Microsoft Defender for Endpoint — https://jeffreyappel.nl/configure-ai-agent-runtime-protection-preview-with-microsoft-defender-for-endpoint/

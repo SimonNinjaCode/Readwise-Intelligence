@@ -1,0 +1,44 @@
+# Cybersecurity Report — 2026-07-27
+
+## Week in Security
+This week’s signal was concentrated in identity, social engineering, and software supply chain risk rather than in a single mega-breach. The strongest patterns were the continued spread of ClickFix-style execution chains, abuse of trusted OAuth relationships in SaaS platforms, and a steady shift toward phishing-resistant identity controls such as passkeys. AI security also moved from theory into operations, with Microsoft pushing both agentic defense and broader external AI red teaming. The underlying Readwise collection is stale outside the most recent `later` items: the newest `feed` article tagged `cybersecurity` was published on 2026-05-11, and the newest `feed` item tagged `strategy` was published on 2024-12-19, so this should be treated as a tagging and collection-governance issue rather than a complete weekly market view.
+
+## Notable Incidents & Breaches
+The most important SaaS access story was Microsoft’s write-up on ShinyHunters-linked tradecraft against Salesforce environments. The activity abused OAuth consent, trusted third-party integrations such as Salesloft, Gainsight, and Klue, and misconfigured guest access rather than a native Salesforce flaw. The impact was quiet persistence and large-scale CRM data access through legitimate application paths, which makes detection materially harder than classic credential theft. The lesson is straightforward: connected apps, guest users, and third-party SaaS integrations now need the same governance, telemetry, and response discipline as workforce identities.
+
+Microsoft’s Q2 2026 email threat review showed that email-borne attacks remain industrialized even after major disruption operations. Tycoon2FA-linked phishing volume fell sharply after Microsoft’s March action, but the overall environment remained hostile, with 7.6 billion phishing threats observed in the quarter and a high-volume BEC campaign reaching more than 67,000 users across 42,000 organizations in under three hours. Teams-based vishing also kept growing, which reinforces that collaboration platforms are now part of the mainstream initial-access surface. The lesson is that email and identity programs cannot be separated from Teams, OAuth, and endpoint telemetry anymore.
+
+## Vulnerabilities & Patches
+The most serious platform issue in the selected pool was the long-running Secure Boot shim problem reported by Ars Technica from ESET research. Microsoft had left multiple old, vulnerable UEFI shims signed and unrevoked for years, creating a practical Secure Boot bypass path for both Windows and Linux systems until the June 2026 revocations. That matters because firmware compromise survives operating system reinstallation and, in many environments, would turn a stolen or briefly accessed device into a long-term foothold.
+
+Ars Technica also highlighted HiveLegacy, a Windows User Profile Service elevation-of-privilege zero-day published on the same day Microsoft shipped a record Patch Tuesday volume. The flaw allows a low-privileged user to tamper with another user’s classes registry hive and potentially stage code execution in an administrator context at next logon. Separately, Microsoft detailed the AsyncAPI npm compromise, where poisoned package versions executed at import time rather than install time, bypassing the usual `--ignore-scripts` control and exposing developer workstations, CI/CD runners, and production services that resolved the affected packages.
+
+## Threat Actor Activity
+ClickFix remained one of the clearest operational motifs in the week’s reporting. Microsoft’s ACR Stealer research described two live intrusion chains using ClickFix prompts to launch credential theft, with one branch relying on WebDAV, Python loaders, scheduled-task persistence, and even blockchain-backed dead-drop C2, while the other used MSHTA, obfuscated PowerShell, steganography, and in-memory execution. The takeaway is that paste-and-run social engineering is no longer a fringe trick; it is now a repeatable enterprise intrusion path.
+
+ShinyHunters-linked tradecraft also stood out because it blended vishing, supply-chain access, and OAuth abuse into a SaaS-native attack model. Rather than defeating MFA directly, the operators targeted consent workflows, inherited privileges, and trusted integrations, which gives them persistence and data access while staying inside normal application behavior. On the destructive side, Microsoft’s GigaWiper analysis showed an operator consolidating multiple older malware families into a single Golang backdoor with disk wiping, fake-ransomware, sabotage, and remote-control functions. That combination suggests mature destructive actors are reducing their tooling footprint while expanding post-compromise options.
+
+## Cloud & Identity Security
+Identity hardening moved in the right direction. Microsoft Entra ID will begin rolling out passkeys as the default phishing-resistant authentication method on 2026-09-01, with Microsoft-provided SMS and voice authentication ending on 2027-02-01. That is an important market signal: shared-secret MFA is now being treated as transitional, not strategic.
+
+The same trend showed up elsewhere in the selected set. Microsoft tightened Entra branded sign-ins to reduce phishing-friendly custom CSS abuse, promoted Zero Trust controls for AI, web, and private application access, and expanded telemetry for Salesforce-connected apps in Defender for Cloud Apps. Combined with the ShinyHunters findings, the message is consistent: modern identity defense now has to cover non-human identities, OAuth scopes, agent access, and connected SaaS applications, not just user sign-in events.
+
+## Recommended Actions
+1. Hunt immediately for ClickFix-style execution chains, including `mshta.exe`, `rundll32.exe` loading remote content, WebDAV paths, obfuscated PowerShell, and suspicious browser credential-store access.
+2. Review Salesforce and other SaaS OAuth-connected applications, guest access, and third-party integrations; remove unused apps, validate high-privilege scopes, and enable near-real-time event monitoring where available.
+3. Purge and pin dependencies affected by the AsyncAPI compromise, rebuild CI caches and golden images, and rotate secrets from any host that may have imported the poisoned package versions.
+4. Accelerate phishing-resistant MFA rollout by moving users from SMS and voice to passkeys or FIDO2-backed methods, starting with admins, developers, and high-value business roles.
+5. Confirm June 2026 Secure Boot revocations are applied, validate dbx status on exposed fleets, and prioritize firmware assurance for laptops used by privileged users or traveling staff.
+6. Add detection content for destructive tooling behavior, including scheduled-task masquerading, raw-disk access, log clearing, and sudden file-encryption activity without a conventional ransom workflow.
+
+## Sources
+- Enhancing AI security through global AI red teaming — https://www.microsoft.com/en-us/security/blog/2026/07/27/enhancing-ai-security-through-global-ai-red-teaming/
+- Rethinking security for the age of AI — https://blogs.microsoft.com/blog/2026/07/27/rethinking-security-for-the-age-of-ai/
+- Email threat landscape: Q2 2026 trends and insights — https://www.microsoft.com/en-us/security/blog/2026/07/23/email-threat-landscape-q2-2026-trends-and-insights/
+- Defending SaaS-based applications against ShinyHunters OAuth abuse — https://www.microsoft.com/en-us/security/blog/2026/07/13/defending-saas-based-applications-against-shinyhunters-oauth-abuse/
+- ACR Stealer: Two observed intrusion chains amid increased threat activity — https://www.microsoft.com/en-us/security/blog/2026/07/16/acr-stealer-two-observed-intrusion-chains-amid-increased-threat-activity/
+- Unpacking the AsyncAPI npm supply chain compromise and import-time payload delivery — https://www.microsoft.com/en-us/security/blog/2026/07/15/unpacking-asyncapi-npm-supply-chain-compromise-import-time-payload-delivery/
+- Windows 0-day drops the same day Microsoft releases record number of patches — https://arstechnica.com/security/2026/07/windows-0-day-drops-the-same-day-microsoft-releases-record-number-of-patches/
+- Microsoft’s Secure Boot has been broken for a decade and no one noticed until now — https://arstechnica.com/security/2026/07/microsoft-secure-boot-has-been-broken-for-most-of-its-existence/
+- GigaWiper: Anatomy of a destructive backdoor assembled from multiple malware — https://www.microsoft.com/en-us/security/blog/2026/07/09/gigawiper-anatomy-of-a-destructive-backdoor-assembled-from-multiple-malware/
+- Microsoft Entra ID security updates: Passkeys are the default authentication method in Entra ID — https://www.microsoft.com/en-us/security/blog/2026/07/13/microsoft-entra-id-security-updates-passkeys-are-the-default-authentication-method-in-entra-id/
